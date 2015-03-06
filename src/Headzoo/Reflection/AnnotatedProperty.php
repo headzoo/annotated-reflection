@@ -32,4 +32,26 @@ class AnnotatedProperty
     {
         return $this->declaring;
     }
+
+    /**
+     * Gets all of the property annotations
+     *
+     * @return array
+     */
+    public function getAnnotations()
+    {
+        return AnnotatedReflection::reader()->getPropertyAnnotations($this);
+    }
+
+    /**
+     * Gets a specific property annotation if it exists
+     *
+     * @param string $annotation The annotation
+     *
+     * @return null|object
+     */
+    public function getAnnotation($annotation)
+    {
+        return AnnotatedReflection::reader()->getPropertyAnnotation($this, $annotation);
+    }
 }

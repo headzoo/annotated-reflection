@@ -26,16 +26,16 @@ class ChildPerson
     extends ParentPerson
 {
     /**
-     * @Headzoo\Property
+     * @Headzoo\Property("public")
      * @Headzoo\Integer
      */
     public $counter;
 
     /**
-     * @Headzoo\Property
+     * @Headzoo\Property("private")
      * @Headzoo\Integer
      */
-    public $start;
+    private $start;
 
     /**
      * @Headzoo\Method
