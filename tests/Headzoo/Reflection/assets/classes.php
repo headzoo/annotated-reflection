@@ -32,13 +32,13 @@ class ChildPerson
     public $counter;
 
     /**
-     * @Headzoo\Property("private")
+     * @Headzoo\Property("protected")
      * @Headzoo\Integer
      */
-    private $start;
+    protected $start;
 
     /**
-     * @Headzoo\Method
+     * @Headzoo\Method("internal")
      */
     public function getCounter() {}
 
