@@ -4,9 +4,10 @@ namespace Headzoo\Reflection\Tests;
 use Headzoo\Reflection\Annotation\Headzoo\AbstractAnnotation;
 use Headzoo\Reflection\Annotation\Headzoo;
 use Headzoo\Reflection\AnnotatedReflection;
-use Headzoo\Reflection\AnnotatedMethod;
 use Headzoo\Reflection\AnnotatedProperty;
 use Headzoo\Reflection\AnnotatedClass;
+use Headzoo\Reflection\Annotation\Headzoo\Integer;
+use Headzoo\Reflection\Annotation\Headzoo\Property;
 use PHPUnit_Framework_TestCase;
 
 /**
@@ -53,11 +54,11 @@ class AnnotatedPropertyTest
         );
         $this->assertEquals(
             "public",
-            $annotations[0]->getValue()
+            $annotations[Property::class]->getValue()
         );
         $this->assertEquals(
             null,
-            $annotations[1]->getValue()
+            $annotations[Integer::class]->getValue()
         );
     }
 

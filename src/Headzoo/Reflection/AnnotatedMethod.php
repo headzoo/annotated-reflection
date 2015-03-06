@@ -3,6 +3,12 @@ namespace Headzoo\Reflection;
 
 use ReflectionMethod;
 
+/**
+ * The ReflectionMethod class reports information about a method, as well
+ * as the method annotations.
+ * 
+ * @licence http://www.opensource.org/licenses/mit-license.php
+ */
 class AnnotatedMethod
     extends ReflectionMethod
 {
@@ -12,15 +18,26 @@ class AnnotatedMethod
     private $declaring;
 
     /**
+     * @var array
+     */
+    private $annotations = [];
+
+    /**
      * Constructor
      *
-     * @param AnnotatedClass $declaring The declaring class
-     * @param string                   $name      The name of the method
+     * @param AnnotatedClass $declaring     The declaring class
+     * @param string         $name          The name of the method
+     * @param array          $annotations   The method annotations if they are parsed already
      */
-    public function __construct($declaring, $name)
+    public function __construct($declaring, $name, array $annotations = [])
     {
         parent::__construct($declaring->getName(), $name);
         $this->declaring = $declaring;
+        if ($annotations) {
+            $this->annotations = $annotations;
+        } else {
+            $this->findAnnotations();
+        }
     }
 
     /**
@@ -58,7 +75,7 @@ class AnnotatedMethod
      */
     public function getAnnotations()
     {
-        return AnnotatedReflection::reader()->getMethodAnnotations($this);
+        return $this->annotations;
     }
 
     /**
@@ -70,6 +87,20 @@ class AnnotatedMethod
      */
     public function getAnnotation($annotation)
     {
-        return AnnotatedReflection::reader()->getMethodAnnotation($this, $annotation);
+        if (isset($this->annotations[$annotation])) {
+            return $this->annotations[$annotation];
+        }
+        
+        return null;
+    }
+
+    /**
+     * Finds the class annotations
+     */
+    private function findAnnotations()
+    {
+        foreach (AnnotatedReflection::reader()->getMethodAnnotations($this) as $index => $annotation) {
+            $this->annotations[$index] = $annotation;
+        }
     }
 }

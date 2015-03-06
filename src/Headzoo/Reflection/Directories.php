@@ -3,6 +3,8 @@ namespace Headzoo\Reflection;
 
 /**
  * Utility class for working with directories.
+ * 
+ * @licence http://www.opensource.org/licenses/mit-license.php
  */
 class Directories
 {

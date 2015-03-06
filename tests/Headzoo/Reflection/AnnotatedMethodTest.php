@@ -52,7 +52,7 @@ class AnnotatedMethodTest
         );
         $this->assertEquals(
             "internal",
-            $annotations[0]->getValue()
+            current($annotations)->getValue()
         );
     }
 

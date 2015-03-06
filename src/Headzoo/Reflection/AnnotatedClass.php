@@ -2,7 +2,15 @@
 namespace Headzoo\Reflection;
 
 use ReflectionClass;
+use ReflectionProperty;
+use ReflectionMethod;
 
+/**
+ * The ReflectionClass class reports information about a class, as well as the
+ * class annotations.
+ * 
+ * @licence http://www.opensource.org/licenses/mit-license.php
+ */
 class AnnotatedClass
     extends ReflectionClass
 {
@@ -10,6 +18,50 @@ class AnnotatedClass
      * @var bool|AnnotatedClass
      */
     private $parent = false;
+
+    /**
+     * @var array
+     */
+    private $properties = [];
+
+    /**
+     * @var array
+     */
+    private $methods = [];
+
+    /**
+     * @var array
+     */
+    private $annotations = [];
+
+    /**
+     * @var array
+     */
+    private $annotated_properties = [];
+
+    /**
+     * @var array
+     */
+    private $annotated_methods = [];
+
+    /**
+     * @var array
+     */
+    private $property_annotations = [];
+
+    /**
+     * @var array
+     */
+    private $method_annotations = [];
+
+    /**
+     * @param object|string $class The name of a class or an object
+     */
+    public function __construct($class)
+    {
+        parent::__construct($class);
+        $this->findAnnotations();
+    }
 
     /**
      * Gets parent class
@@ -35,18 +87,7 @@ class AnnotatedClass
      */
     public function getAnnotations()
     {
-        $annotations = [];
-        foreach(AnnotatedReflection::reader()->getClassAnnotations($this) as $annotation) {
-            $annotations[] = $annotation;
-        }
-        if ($parent = $this->getParentClass()) {
-            $parent_annotations = $parent->getAnnotations();
-            if ($parent_annotations) {
-                $annotations = array_merge($parent_annotations, $annotations);
-            }
-        }
-
-        return $annotations;
+        return $this->annotations;
     }
 
     /**
@@ -58,12 +99,11 @@ class AnnotatedClass
      */
     public function getAnnotation($annotation)
     {
-        $found = AnnotatedReflection::reader()->getClassAnnotation($this, $annotation);
-        if (!$found && $parent = $this->getParentClass()) {
-            $found = $parent->getAnnotation($annotation);
+        if (isset($this->annotations[$annotation])) {
+            return $this->annotations[$annotation];
         }
 
-        return $found;
+        return null;
     }
 
     /**
@@ -75,12 +115,11 @@ class AnnotatedClass
      */
     public function getProperties($filter = null)
     {
-        $properties = $filter ? parent::getProperties($filter) : parent::getProperties();
+        $properties = $filter
+            ? parent::getProperties($filter)
+            : parent::getProperties();
         foreach($properties as &$property) {
-            $property = new AnnotatedProperty(
-                $this,
-                $property->getName()
-            );
+            $property = $this->createAnnotatedProperty($property);
         }
 
         return $properties;
@@ -95,13 +134,29 @@ class AnnotatedClass
      */
     public function getProperty($name)
     {
-        $property = parent::getProperty($name);
-        $property = new AnnotatedProperty(
-            $this,
-            $property->getName()
+        if (isset($this->properties[$name])) {
+            return $this->properties[$name];
+        }
+        
+        return $this->createAnnotatedProperty(
+            parent::getProperty($name)
         );
+    }
 
-        return $property;
+    /**
+     * Returns the annotations on the given property
+     *
+     * @param string $property The name of the property
+     *
+     * @return array
+     */
+    public function getPropertyAnnotations($property)
+    {
+        if (isset($this->property_annotations[$property])) {
+            return $this->property_annotations[$property];
+        }
+
+        return [];
     }
 
     /**
@@ -113,14 +168,11 @@ class AnnotatedClass
      */
     public function getPropertiesWithAnnotation($annotation)
     {
-        $properties = [];
-        foreach($this->getProperties() as $property) {
-            if (AnnotatedReflection::reader()->getPropertyAnnotation($property, $annotation)) {
-                $properties[] = $property;
-            }
+        if (isset($this->annotated_properties[$annotation])) {
+            return $this->annotated_properties[$annotation];
         }
 
-        return $properties;
+        return [];
     }
 
     /**
@@ -132,12 +184,11 @@ class AnnotatedClass
      */
     public function getMethods($filter = null)
     {
-        $methods = $filter ? parent::getMethods($filter) : parent::getMethods();
+        $methods = $filter
+            ? parent::getMethods($filter)
+            : parent::getMethods();
         foreach($methods as &$method) {
-            $method = new AnnotatedMethod(
-                $this,
-                $method->getName()
-            );
+            $method = $this->createAnnotatedMethod($method);
         }
 
         return $methods;
@@ -152,13 +203,29 @@ class AnnotatedClass
      */
     public function getMethod($name)
     {
-        $method = parent::getMethod($name);
-        $method = new AnnotatedMethod(
-            $this,
-            $method->getName()
+        if (isset($this->methods[$name])) {
+            return $this->methods[$name];
+        }
+        
+        return $this->createAnnotatedMethod(
+            parent::getMethod($name)
         );
+    }
 
-        return $method;
+    /**
+     * Returns the annotations on the given method
+     *
+     * @param string $method The name of the method
+     *
+     * @return array
+     */
+    public function getMethodAnnotations($method)
+    {
+        if (isset($this->method_annotations[$method])) {
+            return $this->method_annotations[$method];
+        }
+
+        return [];
     }
 
     /**
@@ -170,13 +237,89 @@ class AnnotatedClass
      */
     public function getMethodsWithAnnotation($annotation)
     {
-        $methods = [];
-        foreach($this->getMethods() as $method) {
-            if (AnnotatedReflection::reader()->getMethodAnnotation($method, $annotation)) {
-                $methods[] = $method;
-            }
+        if (isset($this->annotated_methods[$annotation])) {
+            return $this->annotated_methods[$annotation];
         }
 
-        return $methods;
+        return [];
+    }
+
+    /**
+     * Converts a ReflectionProperty into an AnnotatedProperty
+     *
+     * @param ReflectionProperty|string $property
+     *
+     * @return AnnotatedProperty
+     */
+    private function createAnnotatedProperty($property)
+    {
+        $name = ($property instanceof ReflectionProperty) ? $property->getName() : $property;
+        if (!isset($this->properties[$name])) {
+            $this->properties[$name] = new AnnotatedProperty(
+                $this,
+                $name,
+                $this->getPropertyAnnotations($name)
+            );
+        }
+
+        return $this->properties[$name];
+    }
+
+    /**
+     * Converts a ReflectionMethod into an AnnotatedMethod
+     *
+     * @param ReflectionMethod|string $method
+     *
+     * @return AnnotatedMethod
+     */
+    private function createAnnotatedMethod($method)
+    {
+        $name = ($method instanceof ReflectionMethod) ? $method->getName() : $method;
+        if (!isset($this->methods[$name])) {
+            $this->methods[$name] = new AnnotatedMethod(
+                $this,
+                $name,
+                $this->getMethodAnnotations($name)
+            );
+        }
+
+        return $this->methods[$name];
+    }
+
+    /**
+     * Finds the class annotations
+     */
+    private function findAnnotations()
+    {
+        foreach(AnnotatedReflection::reader()->getClassAnnotations($this) as $index => $annotation) {
+            $this->annotations[$index] = $annotation;
+        }
+        if ($parent = $this->getParentClass()) {
+            if ($annotations = $parent->getAnnotations()) {
+                $this->annotations = array_merge($annotations, $this->annotations);
+            }
+        }
+        
+        foreach(parent::getProperties() as $property) {
+            foreach(AnnotatedReflection::reader()->getPropertyAnnotations($property) as $index => $annotation) {
+                $this->property_annotations[$property->getName()][$index] = $annotation;
+            }
+        }
+        foreach($this->property_annotations as $name => $annotations) {
+            foreach($annotations as $index => $annotation) {
+                $this->annotated_properties[$index][] = $this->createAnnotatedProperty($name);
+            }
+        }
+        
+        foreach(parent::getMethods() as $method) {
+            foreach(AnnotatedReflection::reader()->getMethodAnnotations($method) as $index => $annotation) {
+                $this->method_annotations[$method->getName()][$index] = $annotation;
+            }
+        }
+        foreach($this->method_annotations as $name => $annotations) {
+            foreach($annotations as $index => $annotation) {
+                $this->annotated_methods[$index][] = $this->createAnnotatedMethod($name);
+            }
+        }
     }
 }

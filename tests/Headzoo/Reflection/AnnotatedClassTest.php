@@ -7,6 +7,10 @@ use Headzoo\Reflection\AnnotatedReflection;
 use Headzoo\Reflection\AnnotatedMethod;
 use Headzoo\Reflection\AnnotatedProperty;
 use Headzoo\Reflection\AnnotatedClass;
+use Headzoo\Reflection\Annotation\Headzoo\Integer;
+use Headzoo\Reflection\Annotation\Headzoo\Method;
+use Headzoo\Reflection\Annotation\Headzoo\Property;
+use Headzoo\Reflection\Annotation\Headzoo\TestPerson;
 use PHPUnit_Framework_TestCase;
 
 /**
@@ -64,11 +68,11 @@ class AnnotatedClassTest
         );
         $this->assertEquals(
             "headzoo",
-            $annotations[0]->getValue()
+            $annotations[TestPerson::class]->getValue()
         );
         $this->assertEquals(
             "code_monkey",
-            $annotations[0]->getJob()
+            $annotations[TestPerson::class]->getJob()
         );
     }
 
@@ -121,6 +125,31 @@ class AnnotatedClassTest
     }
 
     /**
+     * @covers ::getPropertyAnnotations
+     */
+    public function testGetPropertyAnnotations()
+    {
+        $annotations = $this->fixture->getPropertyAnnotations("counter");
+        $this->assertCount(2, $annotations);
+        $this->assertArrayHasKey(
+            Property::class,
+            $annotations
+        );
+        $this->assertInstanceOf(
+            Property::class,
+            $annotations[Property::class]
+        );
+        $this->assertArrayHasKey(
+            Integer::class,
+            $annotations
+        );
+        $this->assertInstanceOf(
+            Integer::class,
+            $annotations[Integer::class]
+        );
+    }
+
+    /**
      * @covers ::getPropertiesWithAnnotation
      */
     public function testGetPropertiesWithAnnotation()
@@ -163,6 +192,23 @@ class AnnotatedClassTest
         $this->assertSame(
             $this->fixture,
             $this->fixture->getMethod("getCounter")->getDeclaringClass()
+        );
+    }
+
+    /**
+     * @covers ::getMethodAnnotations
+     */
+    public function testGetMethodAnnotations()
+    {
+        $annotations = $this->fixture->getMethodAnnotations("getCounter");
+        $this->assertCount(1, $annotations);
+        $this->assertArrayHasKey(
+            Method::class,
+            $annotations
+        );
+        $this->assertInstanceOf(
+            Method::class,
+            $annotations[Method::class]
         );
     }
 

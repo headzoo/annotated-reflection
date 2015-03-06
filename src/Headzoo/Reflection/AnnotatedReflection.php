@@ -3,6 +3,7 @@ namespace Headzoo\Reflection;
 
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Doctrine\Common\Annotations\CachedReader;
+use Doctrine\Common\Annotations\IndexedReader;
 use Doctrine\Common\Annotations\Reader;
 use Doctrine\Common\Annotations\SimpleAnnotationReader;
 use Doctrine\Common\Cache\ArrayCache;
@@ -10,6 +11,8 @@ use Doctrine\Common\Cache\CacheProvider;
 
 /**
  * Used to configure the annotated reflection system.
+ * 
+ * @licence http://www.opensource.org/licenses/mit-license.php
  */
 class AnnotatedReflection
 {
@@ -93,10 +96,10 @@ class AnnotatedReflection
             foreach (self::$namespaces as $namespace) {
                 self::$reader->addNamespace($namespace);
             }
-            self::$reader = new CachedReader(
+            self::$reader = new IndexedReader(new CachedReader(
                 self::$reader,
                 self::getCacheProvider()
-            );
+            ));
         }
 
         return self::$reader;

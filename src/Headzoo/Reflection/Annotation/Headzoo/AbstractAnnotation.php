@@ -1,6 +1,9 @@
 <?php
 namespace Headzoo\Reflection\Annotation\Headzoo;
 
+/**
+ * @licence http://www.opensource.org/licenses/mit-license.php
+ */
 abstract class AbstractAnnotation
 {
     /**
