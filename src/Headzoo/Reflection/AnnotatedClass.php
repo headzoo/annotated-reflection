@@ -307,7 +307,7 @@ class AnnotatedClass
         }
         foreach($this->property_annotations as $name => $annotations) {
             foreach($annotations as $index => $annotation) {
-                $this->annotated_properties[$index][] = $this->createAnnotatedProperty($name);
+                $this->annotated_properties[$index][$name][] = $this->createAnnotatedProperty($name);
             }
         }
         
@@ -318,7 +318,7 @@ class AnnotatedClass
         }
         foreach($this->method_annotations as $name => $annotations) {
             foreach($annotations as $index => $annotation) {
-                $this->annotated_methods[$index][] = $this->createAnnotatedMethod($name);
+                $this->annotated_methods[$index][$name][] = $this->createAnnotatedMethod($name);
             }
         }
     }

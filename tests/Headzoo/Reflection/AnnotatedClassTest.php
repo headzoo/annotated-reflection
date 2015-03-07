@@ -156,7 +156,7 @@ class AnnotatedClassTest
         $this->assertCount(3, $properties);
         $this->assertInstanceOf(
             AnnotatedProperty::class,
-            $properties[0]
+            $properties["counter"][0]
         );
     }
 
@@ -219,7 +219,7 @@ class AnnotatedClassTest
         $this->assertCount(3, $methods);
         $this->assertInstanceOf(
             AnnotatedMethod::class,
-            $methods[0]
+            $methods["getCounter"][0]
         );
     }
 }
