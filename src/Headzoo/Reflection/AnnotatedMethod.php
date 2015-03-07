@@ -95,6 +95,18 @@ class AnnotatedMethod
     }
 
     /**
+     * Returns a boolean value indicating whether the method has the given annotation
+     *
+     * @param string $annotation The annotation
+     *
+     * @return bool
+     */
+    public function hasAnnotation($annotation)
+    {
+        return isset($this->annotations[$annotation]);
+    }
+
+    /**
      * Finds the class annotations
      */
     private function findAnnotations()

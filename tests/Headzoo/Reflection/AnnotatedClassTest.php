@@ -90,6 +90,19 @@ class AnnotatedClassTest
     }
 
     /**
+     * @covers ::hasAnnotation
+     */
+    public function testHasAnnotation()
+    {
+        $this->assertTrue(
+            $this->fixture->hasAnnotation(Headzoo\TestClass::class)
+        );
+        $this->assertFalse(
+            $this->fixture->hasAnnotation(Headzoo\String::class)
+        );
+    }
+
+    /**
      * @covers ::getProperties
      */
     public function testGetProperties()

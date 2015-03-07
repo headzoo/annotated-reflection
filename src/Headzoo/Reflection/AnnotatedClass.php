@@ -107,6 +107,18 @@ class AnnotatedClass
     }
 
     /**
+     * Returns a boolean value indicating whether the class has the given annotation
+     * 
+     * @param string $annotation The annotation
+     *
+     * @return bool
+     */
+    public function hasAnnotation($annotation)
+    {
+        return isset($this->annotations[$annotation]);
+    }
+
+    /**
      * Gets properties
      *
      * @param null|int $filter The optional filter, for filtering desired property types

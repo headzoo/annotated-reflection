@@ -74,4 +74,17 @@ class AnnotatedPropertyTest
         $annotation = $this->fixture->getAnnotation(Headzoo\Method::class);
         $this->assertNull($annotation);
     }
+
+    /**
+     * @covers ::hasAnnotation
+     */
+    public function testHasAnnotation()
+    {
+        $this->assertTrue(
+            $this->fixture->hasAnnotation(Headzoo\Property::class)
+        );
+        $this->assertFalse(
+            $this->fixture->hasAnnotation(Headzoo\Method::class)
+        );
+    }
 }
