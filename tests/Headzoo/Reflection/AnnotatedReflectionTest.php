@@ -17,7 +17,6 @@ class AnnotatedReflectionTest
     /**
      * @covers ::registerAnnotation
      * @covers ::registerAnnotations
-     * @covers ::
      */
     public function testRegisterAnnotation()
     {
