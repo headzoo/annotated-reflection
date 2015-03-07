@@ -1,13 +1,14 @@
 <?php
 namespace Headzoo\Reflection;
 
+use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Doctrine\Common\Annotations\CachedReader;
 use Doctrine\Common\Annotations\IndexedReader;
 use Doctrine\Common\Annotations\Reader;
-use Doctrine\Common\Annotations\SimpleAnnotationReader;
 use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\Cache\CacheProvider;
+use ReflectionClass;
 
 /**
  * Used to configure the annotated reflection system.
@@ -56,22 +57,26 @@ class AnnotatedReflection
     }
 
     /**
-     * Registers an annotation namespace
-     *
-     * @param string            $namespace The namespace
-     * @param string|array|null $dirs      One or more directories containing the namespace classes
+     * Registers an annotation class
+     * 
+     * @param string $annotation The fully qualified class name
      */
-    public static function registerNamespace($namespace, $dirs = null)
+    public static function registerAnnotation($annotation)
     {
-        if (null === $dirs) {
-            $dirs = Directories::findSubDirectory("src", __DIR__);
-            if (!$dirs) {
-                $dirs = Directories::findSubDirectory("lib", __DIR__);
-            }
+        $reflection = new ReflectionClass($annotation);
+        AnnotationRegistry::registerFile($reflection->getFileName());
+    }
+
+    /**
+     * Registers a group of annotations as an array
+     * 
+     * @param array $annotations Array of fully qualified class names
+     */
+    public static function registerAnnotations(array $annotations)
+    {
+        foreach($annotations as $annotation) {
+            self::registerAnnotation($annotation);
         }
-        
-        AnnotationRegistry::registerAutoloadNamespace($namespace, $dirs);
-        self::$namespaces[] = $namespace;
     }
 
     /**
@@ -92,10 +97,7 @@ class AnnotatedReflection
     public static function reader()
     {
         if (!self::$reader) {
-            self::$reader = new SimpleAnnotationReader();
-            foreach (self::$namespaces as $namespace) {
-                self::$reader->addNamespace($namespace);
-            }
+            self::$reader = new AnnotationReader();
             self::$reader = new IndexedReader(new CachedReader(
                 self::$reader,
                 self::getCacheProvider()

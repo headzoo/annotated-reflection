@@ -3,7 +3,6 @@ namespace Headzoo\Reflection\Tests;
 
 use Headzoo\Reflection\Annotation\Headzoo\AbstractAnnotation;
 use Headzoo\Reflection\Annotation\Headzoo;
-use Headzoo\Reflection\AnnotatedReflection;
 use Headzoo\Reflection\AnnotatedMethod;
 use Headzoo\Reflection\AnnotatedClass;
 use PHPUnit_Framework_TestCase;
@@ -25,7 +24,6 @@ class AnnotatedMethodTest
     public static function setUpBeforeClass()
     {
         require_once(__DIR__ . "/assets/classes.php");
-        AnnotatedReflection::registerNamespace('Headzoo\Reflection\Annotation');
     }
 
     /**

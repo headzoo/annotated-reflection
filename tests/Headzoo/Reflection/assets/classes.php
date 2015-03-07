@@ -1,6 +1,22 @@
 <?php
 namespace Headzoo\Reflection\Tests;
 
+use Headzoo\Reflection\AnnotatedReflection;
+use Headzoo\Reflection\Annotation\Headzoo as Headzoo;
+use Headzoo\Reflection\Annotation\Headzoo\Integer;
+use Headzoo\Reflection\Annotation\Headzoo\Method;
+use Headzoo\Reflection\Annotation\Headzoo\Property;
+use Headzoo\Reflection\Annotation\Headzoo\TestClass;
+use Headzoo\Reflection\Annotation\Headzoo\TestPerson;
+
+AnnotatedReflection::registerAnnotations([
+    Integer::class,
+    Method::class,
+    Property::class,
+    TestPerson::class,
+    TestClass::class
+]);
+
 /**
  * @Headzoo\TestPerson("headzoo", job="code_monkey")
  */
