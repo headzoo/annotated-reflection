@@ -15,6 +15,14 @@ class AnnotatedReflectionTest
     extends PHPUnit_Framework_TestCase
 {
     /**
+     * Called before the tests run
+     */
+    public static function setUpBeforeClass()
+    {
+        AnnotatedReflection::reset();
+    }
+    
+    /**
      * @covers ::registerAnnotation
      * @covers ::registerAnnotations
      */

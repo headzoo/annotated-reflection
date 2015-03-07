@@ -117,4 +117,13 @@ class AnnotatedReflection
 
         return self::$reader;
     }
+
+    /**
+     * Reset to default values
+     */
+    public static function reset()
+    {
+        self::$annotations = [];
+        self::$reader = null;
+    }
 }
