@@ -156,7 +156,14 @@ class AnnotatedClassTest
         $this->assertCount(3, $properties);
         $this->assertInstanceOf(
             AnnotatedProperty::class,
-            $properties["counter"][0]
+            $properties["counter"]
+        );
+
+        $annotations = $this->fixture->getPropertiesWithAnnotation(Headzoo\Integer::class, true);
+        $this->assertCount(3, $annotations);
+        $this->assertInstanceOf(
+            Headzoo\Integer::class,
+            $annotations["counter"]
         );
     }
 
@@ -219,7 +226,14 @@ class AnnotatedClassTest
         $this->assertCount(3, $methods);
         $this->assertInstanceOf(
             AnnotatedMethod::class,
-            $methods["getCounter"][0]
+            $methods["getCounter"]
+        );
+
+        $annotations = $this->fixture->getMethodsWithAnnotation(Headzoo\Method::class, true);
+        $this->assertCount(3, $annotations);
+        $this->assertInstanceOf(
+            Method::class,
+            $annotations["getCounter"]
         );
     }
 }

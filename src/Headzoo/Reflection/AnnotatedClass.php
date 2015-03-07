@@ -162,14 +162,23 @@ class AnnotatedClass
     /**
      * Gets the properties that have the given annotation
      *
-     * @param string $annotation The annotation
+     * @param string $annotation      The annotation
+     * @param bool   $gets_annotation True to return an array of AnnotatedProperty or false to get the annotation
      *
      * @return AnnotatedProperty[]
      */
-    public function getPropertiesWithAnnotation($annotation)
+    public function getPropertiesWithAnnotation($annotation, $gets_annotation = false)
     {
         if (isset($this->annotated_properties[$annotation])) {
-            return $this->annotated_properties[$annotation];
+            if ($gets_annotation) {
+                $annotations = [];
+                foreach($this->annotated_properties[$annotation] as $name => $property) {
+                    $annotations[$name] = $property->getAnnotation($annotation);
+                }
+                return $annotations;
+            } else {
+                return $this->annotated_properties[$annotation];
+            }
         }
 
         return [];
@@ -231,14 +240,23 @@ class AnnotatedClass
     /**
      * Gets the methods that have the given annotation
      *
-     * @param string $annotation The annotation
+     * @param string $annotation      The annotation
+     * @param bool   $gets_annotation True to return an array of AnnotatedProperty or false to get the annotation
      *
      * @return AnnotatedMethod[]
      */
-    public function getMethodsWithAnnotation($annotation)
+    public function getMethodsWithAnnotation($annotation, $gets_annotation = false)
     {
         if (isset($this->annotated_methods[$annotation])) {
-            return $this->annotated_methods[$annotation];
+            if ($gets_annotation) {
+                $annotations = [];
+                foreach($this->annotated_methods[$annotation] as $name => $method) {
+                    $annotations[$name] = $method->getAnnotation($annotation);
+                }
+                return $annotations;
+            } else {
+                return $this->annotated_methods[$annotation];
+            }
         }
 
         return [];
@@ -307,7 +325,7 @@ class AnnotatedClass
         }
         foreach($this->property_annotations as $name => $annotations) {
             foreach($annotations as $index => $annotation) {
-                $this->annotated_properties[$index][$name][] = $this->createAnnotatedProperty($name);
+                $this->annotated_properties[$index][$name] = $this->createAnnotatedProperty($name);
             }
         }
         
@@ -318,7 +336,7 @@ class AnnotatedClass
         }
         foreach($this->method_annotations as $name => $annotations) {
             foreach($annotations as $index => $annotation) {
-                $this->annotated_methods[$index][$name][] = $this->createAnnotatedMethod($name);
+                $this->annotated_methods[$index][$name] = $this->createAnnotatedMethod($name);
             }
         }
     }
