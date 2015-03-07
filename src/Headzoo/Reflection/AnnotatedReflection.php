@@ -25,7 +25,7 @@ class AnnotatedReflection
     /**
      * @var array
      */
-    private static $namespaces = [];
+    private static $annotations = [];
 
     /**
      * @var Reader
@@ -60,33 +60,44 @@ class AnnotatedReflection
      * Registers an annotation class
      * 
      * @param string $annotation The fully qualified class name
+     *                           
+     * @return bool
      */
     public static function registerAnnotation($annotation)
     {
-        $reflection = new ReflectionClass($annotation);
-        AnnotationRegistry::registerFile($reflection->getFileName());
+        if (false === array_search($annotation, self::$annotations)) {
+            $reflection = new ReflectionClass($annotation);
+            AnnotationRegistry::registerFile($reflection->getFileName());
+            self::$annotations[] = $annotation;
+        }
+        
+        return true;
     }
 
     /**
      * Registers a group of annotations as an array
      * 
      * @param array $annotations Array of fully qualified class names
+     *                           
+     * @return bool
      */
     public static function registerAnnotations(array $annotations)
     {
         foreach($annotations as $annotation) {
             self::registerAnnotation($annotation);
         }
+        
+        return true;
     }
 
     /**
-     * Returns the namespaces that have been registered
+     * Returns the annotations that have been registered
      *
      * @return array
      */
-    public static function getRegisteredNamespaces()
+    public static function getRegisteredAnnotations()
     {
-        return self::$namespaces;
+        return self::$annotations;
     }
 
     /**
