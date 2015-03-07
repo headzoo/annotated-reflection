@@ -12,15 +12,12 @@ use ReflectionProperty;
 class AnnotatedProperty
     extends ReflectionProperty
 {
+    use CommonTrait;
+    
     /**
      * @var AnnotatedClass
      */
     private $declaring;
-
-    /**
-     * @var array
-     */
-    private $annotations = [];
 
     /**
      * Constructor
@@ -48,44 +45,6 @@ class AnnotatedProperty
     public function getDeclaringClass()
     {
         return $this->declaring;
-    }
-
-    /**
-     * Gets all of the property annotations
-     *
-     * @return array
-     */
-    public function getAnnotations()
-    {
-        return $this->annotations;
-    }
-
-    /**
-     * Gets a specific property annotation if it exists
-     *
-     * @param string $annotation The annotation
-     *
-     * @return null|object
-     */
-    public function getAnnotation($annotation)
-    {
-        if (isset($this->annotations[$annotation])) {
-            return $this->annotations[$annotation];
-        }
-
-        return null;
-    }
-
-    /**
-     * Returns a boolean value indicating whether the property has the given annotation
-     *
-     * @param string $annotation The annotation
-     *
-     * @return bool
-     */
-    public function hasAnnotation($annotation)
-    {
-        return isset($this->annotations[$annotation]);
     }
 
     /**

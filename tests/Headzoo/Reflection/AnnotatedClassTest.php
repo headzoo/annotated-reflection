@@ -90,6 +90,15 @@ class AnnotatedClassTest
     }
 
     /**
+     * @covers ::mustGetAnnotation
+     * @expectedException \Headzoo\Reflection\Exception\AnnotationNotFoundException
+     */
+    public function testMustGetAnnotation()
+    {
+        $this->fixture->mustGetAnnotation(Headzoo\String::class);
+    }
+
+    /**
      * @covers ::hasAnnotation
      */
     public function testHasAnnotation()

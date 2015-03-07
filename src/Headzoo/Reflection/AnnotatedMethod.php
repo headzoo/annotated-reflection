@@ -12,15 +12,12 @@ use ReflectionMethod;
 class AnnotatedMethod
     extends ReflectionMethod
 {
+    use CommonTrait;
+    
     /**
      * @var AnnotatedClass
      */
     private $declaring;
-
-    /**
-     * @var array
-     */
-    private $annotations = [];
 
     /**
      * Constructor
@@ -66,44 +63,6 @@ class AnnotatedMethod
         }
 
         return $method;
-    }
-
-    /**
-     * Gets all of the method annotations
-     *
-     * @return array
-     */
-    public function getAnnotations()
-    {
-        return $this->annotations;
-    }
-
-    /**
-     * Gets a specific method annotation if it exists
-     *
-     * @param string $annotation The annotation
-     *
-     * @return null|object
-     */
-    public function getAnnotation($annotation)
-    {
-        if (isset($this->annotations[$annotation])) {
-            return $this->annotations[$annotation];
-        }
-        
-        return null;
-    }
-
-    /**
-     * Returns a boolean value indicating whether the method has the given annotation
-     *
-     * @param string $annotation The annotation
-     *
-     * @return bool
-     */
-    public function hasAnnotation($annotation)
-    {
-        return isset($this->annotations[$annotation]);
     }
 
     /**
