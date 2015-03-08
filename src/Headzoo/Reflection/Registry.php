@@ -28,14 +28,12 @@ class Registry
      */
     public function getClass($class)
     {
-        if (is_object($class)) {
-            $class = get_class($class);
-        }
-        if (!isset($this->classes[$class])) {
-            $this->classes[$class] = new AnnotatedClass($class); 
+        $key = $this->buildKey($class);
+        if (!isset($this->classes[$key])) {
+            $this->classes[$key] = new AnnotatedClass($class); 
         }
         
-        return $this->classes[$class];
+        return $this->classes[$key];
     }
 
     /**
@@ -43,11 +41,7 @@ class Registry
      */
     public function getProperty($class, $property)
     {
-        if (is_object($class)) {
-            $class = get_class($class);
-        }
-        
-        $key = "{$class}::{$property}";
+        $key = $this->buildKey($class, $property);
         if (!isset($this->properties[$key])) {
             $class = $this->getClass($class);
             $this->properties[$key] = $class->getProperty($property);
@@ -61,16 +55,33 @@ class Registry
      */
     public function getMethod($class, $method)
     {
-        if (is_object($class)) {
-            $class = get_class($class);
-        }
-
-        $key = "{$class}::{$method}";
+        $key = $this->buildKey($class, $method);
         if (!isset($this->methods[$key])) {
             $class = $this->getClass($class);
             $this->methods[$key] = $class->getMethod($method);
         }
 
         return $this->methods[$key];
+    }
+
+    /**
+     * Builds a key for the local cache
+     * 
+     * @param string|object $class Name of the class
+     * @param string        $child Name of the property or method
+     *
+     * @return string
+     */
+    protected function buildKey($class, $child = null)
+    {
+        if (is_object($class)) {
+            $class = get_class($class);
+        }
+        
+        if (null === $child) {
+            return $class;
+        }
+        
+        return "{$class}::{$child}";
     }
 }
