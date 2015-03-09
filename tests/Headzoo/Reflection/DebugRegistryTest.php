@@ -71,6 +71,11 @@ class DebugRegistryTest
             [ParentPerson::class, ParentPerson::class],
             $this->fixture->getCachedClasses()
         );
+        
+        $this->assertEquals(
+            1,
+            DebugRegistry::getInstanceCount()
+        );
     }
 
     /**
@@ -113,6 +118,11 @@ class DebugRegistryTest
             [ParentPerson::class . "::getId", ParentPerson::class . "::getId"],
             $this->fixture->getCachedMethods()
         );
+
+        $this->assertEquals(
+            2,
+            DebugRegistry::getInstanceCount()
+        );
     }
 
     /**
@@ -154,6 +164,11 @@ class DebugRegistryTest
         $this->assertEquals(
             [ParentPerson::class . "::id", ParentPerson::class . "::id"],
             $this->fixture->getCachedProperties()
+        );
+
+        $this->assertEquals(
+            3,
+            DebugRegistry::getInstanceCount()
         );
     }
 }

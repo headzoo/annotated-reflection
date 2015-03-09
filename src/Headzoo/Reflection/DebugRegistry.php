@@ -8,6 +8,11 @@ class DebugRegistry
     extends Registry
 {
     /**
+     * @var int
+     */
+    protected static $instance_count = 0;
+    
+    /**
      * @var array
      */
     protected $created_classes = [];
@@ -36,6 +41,24 @@ class DebugRegistry
      * @var array
      */
     protected $cached_methods = [];
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        self::$instance_count++;
+    }
+
+    /**
+     * Returns the number of registry instances created
+     * 
+     * @return int
+     */
+    public static function getInstanceCount()
+    {
+        return self::$instance_count;
+    }
 
     /**
      * Gets a list of classes that were created (cache miss)
